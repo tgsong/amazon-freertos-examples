@@ -22,3 +22,9 @@ To monitor the output,
 export ESPPORT <replace-with-serial-port-of-ESP32>
 amazon-freertos/vendors/espressif/esp-idf/tools/idf.py monitor
 ```
+
+## Troubleshooting
+
+### Linker Error: undefined reference to <some_function>
+
+It's usually because of missing dependent libraries/demos. To add them, please update the CMakeLists.txt (the one under root folder) with "target_link_libraries" command.
