@@ -7,7 +7,7 @@ See the official document for software prerequisite, https://docs.aws.amazon.com
 Build instruction,
 
 ```sh
-cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=amazon-freertos/tools/cmake/toolchains/xtensa-esp32.cmake -GNinja
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=freertos/tools/cmake/toolchains/xtensa-esp32.cmake -GNinja
 ```
 
 To flash,
