@@ -1,6 +1,6 @@
 /*
- * Amazon FreeRTOS V1.4.7
- * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * FreeRTOS V1.4.7
+ * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -40,8 +40,10 @@
 #include "iot_logging_task.h"
 
 #include "nvs_flash.h"
-
+#if !AFR_ESP_LWIP
+#include "FreeRTOS_IP.h"
 #include "FreeRTOS_Sockets.h"
+#endif
 
 #include "esp_system.h"
 #include "esp_wifi.h"
@@ -56,6 +58,7 @@
 
 #include "driver/uart.h"
 #include "aws_application_version.h"
+#include "tcpip_adapter.h"
 
 #include "iot_network_manager_private.h"
 
@@ -121,6 +124,8 @@ int app_main( void )
 
         #if BLE_ENABLED
             /* Initialize BLE. */
+            ESP_ERROR_CHECK( esp_bt_controller_mem_release( ESP_BT_MODE_CLASSIC_BT ) );
+
             if( prvBLEStackInit() != ESP_OK )
             {
                 configPRINTF( ( "Failed to initialize the bluetooth stack\n " ) );
@@ -170,7 +175,13 @@ static void prvMiscInitialization( void )
                             tskIDLE_PRIORITY + 5,
                             mainLOGGING_MESSAGE_QUEUE_LENGTH );
 
+#if AFR_ESP_LWIP
+    configPRINTF( ("Initializing lwIP TCP stack\r\n") );
+    tcpip_adapter_init();
+#else
+    configPRINTF( ("Initializing FreeRTOS TCP stack\r\n") );
     vApplicationIPInit();
+#endif
 }
 
 /*-----------------------------------------------------------*/
@@ -189,11 +200,6 @@ static void prvMiscInitialization( void )
             esp_err_t xRet;
 
             xRet = esp_bt_controller_mem_release( ESP_BT_MODE_BLE );
-
-            if( xRet == ESP_OK )
-            {
-                xRet = esp_bt_controller_mem_release( ESP_BT_MODE_BTDM );
-            }
 
             return xRet;
         }
@@ -333,8 +339,8 @@ void vApplicationDaemonTaskStartupHook( void )
 {
 }
 
+#if !AFR_ESP_LWIP
 /*-----------------------------------------------------------*/
-
 void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
 {
     uint32_t ulIPAddress, ulNetMask, ulGatewayAddress, ulDNSServerAddress;
@@ -358,3 +364,4 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
         esp_event_send( &evt );
     }
 }
+#endif
