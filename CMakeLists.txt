@@ -26,4 +26,9 @@ add_subdirectory(freertos)
 
 # Link against the mqtt demo so that we can use it. Dependencies of this demo are transitively
 # linked.
-target_link_libraries(afr_demo PRIVATE AFR::demo_mqtt)
+target_link_libraries(
+    afr_demo
+    PRIVATE
+    AFR::demo_core_mqtt
+    AFR::common_io
+)
