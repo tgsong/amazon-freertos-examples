@@ -1,6 +1,6 @@
 # Amazon FreeRTOS Examples
 
-This repo shows how to set up a CMake project for ESP32 and use amazon freertos as an external library.
+This repo shows how to set up a CMake project for ESP32 and use amazon Freertos as an external library.
 
 See the official document for software prerequisite, https://docs.aws.amazon.com/freertos/latest/userguide/getting_started_espressif.html
 
@@ -13,7 +13,7 @@ cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=freertos/tools/cmake/toolchains/xtens
 To flash,
 
 ```sh
-cmake --build build --target flash
+CMake --build --target flash
 ```
 
 To monitor the output,
@@ -27,7 +27,7 @@ amazon-freertos/vendors/espressif/esp-idf/tools/idf.py monitor
 
 ### Linker Error: undefined reference to <some_function>
 
-If you changed some configuartion and run into this, usually it's  because of missing dependent libraries/demos. To fix it, first find out which CMake target the missing functions belong to, normally it should be in the `CMakeLists.txt` closest to the source file where the functions are defined. Then add the CMake target to your application dependency list using the `target_link_libraries` command in the root level `CMakeLists.txt`. For example,
+If you changed some configuration and run into this, usually it's because of missing dependent libraries/demos. To fix it, first, find out which CMake target the missing functions belong to, normally it should be in the `CMakeLists.txt` closest to the source file where the functions are defined. Then add the CMake target to your application dependency list using the `target_link_libraries` command in the root level `CMakeLists.txt`. For example,
 
 1. Linker complains about `undefined reference to NumericComparisonInit`.
 1. `NumericComparisonInit` is defined in `amazon-freertos/demos/ble/iot_ble_numericComparison.c`.
